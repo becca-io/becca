@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "projects": {
+    "homepage": {
+      "root": "apps/homepage",
+      "sourceRoot": "apps/homepage",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/homepage",
+            "outputPath": "dist/apps/homepage"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "homepage:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "homepage:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "homepage:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/homepage/tsconfig.json",
+              "apps/homepage/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/homepage/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/homepage/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "homepage-e2e": {
+      "root": "apps/homepage-e2e",
+      "sourceRoot": "apps/homepage-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/homepage-e2e/cypress.json",
+            "tsConfig": "apps/homepage-e2e/tsconfig.e2e.json",
+            "devServerTarget": "homepage:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "homepage:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/homepage-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/homepage-e2e/**/*"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/next"
+  },
+  "schematics": {
+    "@nrwl/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint"
+      }
+    }
+  },
+  "defaultProject": "homepage"
+}
