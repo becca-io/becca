@@ -17,7 +17,6 @@ export interface Validation {
 
 interface Props extends InputHTMLAttributes<HTMLInputElement>, Validation {
   label?: ReactNode;
-  isError?: boolean;
   type?: string;
 }
 
@@ -69,10 +68,13 @@ export const TextField = forwardRef(
 const Wrapper = styled.div`
   position: relative;
 `;
-const Label = styled.label`
+const Label = styled.label<ThemeProps>`
+  pointer-events: none;
+  font-size: 12px;
   position: absolute;
-  left: 5px;
-  top: 10px;
+  left: 15px;
+  top: 14px;
+  color: ${({ theme }) => theme.colors.primary.gray6};
   transition: 0.2s ease all;
 `;
 
@@ -124,6 +126,7 @@ const StyledInput = styled.input<ThemeProps & Props & { isFocused: boolean }>`
   &:focus ~ label,
   &:valid ~ label {
     top: -20px;
+    left: 5px;
   }
 `;
 
