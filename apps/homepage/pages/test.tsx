@@ -15,6 +15,7 @@ export const Test = () => {
     <>
       <h2>Controlled TextField - Validation</h2>
       <TextField
+        label="test input"
         validationState={getValidationState()}
         onChange={(e) => setValue(e.target.value)}
         value={value}

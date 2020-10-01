@@ -18,22 +18,25 @@ export interface Validation {
 interface Props extends InputHTMLAttributes<HTMLInputElement>, Validation {
   label?: ReactNode;
   isError?: boolean;
+  type?: string;
 }
 
 const ControlledTextField = forwardRef(
-  (props: Props, ref: Ref<HTMLInputElement>) => {
+  ({ type = 'text', ...rest }: Props, ref: Ref<HTMLInputElement>) => {
     const [isFocused, setIsFocused] = useState(false);
 
     return (
       <Wrapper>
         <StyledInput
-          {...props}
+          {...rest}
           ref={ref}
           isFocused={isFocused}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          required
         />
         <StatusBar />
+        <Label>{rest.label}</Label>
       </Wrapper>
     );
   }
@@ -63,9 +66,14 @@ export const TextField = forwardRef(
   }
 );
 
-// TODO: Change to label
 const Wrapper = styled.div`
   position: relative;
+`;
+const Label = styled.label`
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  transition: 0.2s ease all;
 `;
 
 const StatusBar = styled.span<ThemeProps & Props>`
@@ -111,6 +119,11 @@ const StyledInput = styled.input<ThemeProps & Props & { isFocused: boolean }>`
         return theme.colors.primary.violet3;
       }
     }};
+  }
+
+  &:focus ~ label,
+  &:valid ~ label {
+    top: -20px;
   }
 `;
 
