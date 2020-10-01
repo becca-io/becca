@@ -1,16 +1,38 @@
 import styled from '@emotion/styled';
-import React, { forwardRef, InputHTMLAttributes, Ref, useState } from 'react';
+import React, {
+  forwardRef,
+  InputHTMLAttributes,
+  ReactNode,
+  Ref,
+  useState,
+} from 'react';
 import { ThemeProps } from '../color';
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+export type ValidationState = 'valid' | 'invalid';
+
+export interface Validation {
+  validationState?: ValidationState;
+  isRequired?: boolean;
+}
+
+interface Props extends InputHTMLAttributes<HTMLInputElement>, Validation {
+  label?: ReactNode;
   isError?: boolean;
 }
 
 const ControlledTextField = forwardRef(
-  ({ value, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
+  (props: Props, ref: Ref<HTMLInputElement>) => {
+    const [isFocused, setIsFocused] = useState(false);
+
     return (
       <Wrapper>
-        <StyledInput ref={ref} {...rest} />
+        <StyledInput
+          {...props}
+          ref={ref}
+          isFocused={isFocused}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+        />
         <StatusBar />
       </Wrapper>
     );
@@ -35,9 +57,9 @@ const UnControlledTextField = forwardRef(
 export const TextField = forwardRef(
   ({ value, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
     if (value == null) {
-      return <UnControlledTextField ref={ref} {...rest} />;
+      return <UnControlledTextField {...rest} ref={ref} />;
     }
-    return <ControlledTextField value={value} {...rest} />;
+    return <ControlledTextField {...rest} value={value} />;
   }
 );
 
@@ -63,7 +85,7 @@ const StatusBar = styled.span<ThemeProps & Props>`
   height: 3px;
 `;
 
-const StyledInput = styled.input<ThemeProps & Props>`
+const StyledInput = styled.input<ThemeProps & Props & { isFocused: boolean }>`
   border-radius: 8px;
   border: 1px solid;
   padding: 10px 20px;
@@ -75,17 +97,19 @@ const StyledInput = styled.input<ThemeProps & Props>`
     visibility: visible;
     opacity: 1;
     transition: visibility 0s linear, opacity 0.1s linear;
-    background-color: ${({ theme, isError }) => {
-      return isError ? theme.colors.primary.red3 : theme.colors.primary.green3;
-    }};
-  }
-
-  &:focus + span {
-    visibility: visible;
-    opacity: 1;
-    transition: visibility 0s linear, opacity 0.1s linear;
-    background-color: ${({ theme }) => {
-      return theme.colors.primary.violet3;
+    background-color: ${({ theme, validationState, isFocused }) => {
+      if (validationState === 'invalid') {
+        return theme.colors.primary.red3;
+      }
+      if (validationState === 'valid') {
+        return theme.colors.primary.green3;
+      }
+      if (!isFocused) {
+        return 'transparent';
+      }
+      if (validationState === undefined) {
+        return theme.colors.primary.violet3;
+      }
     }};
   }
 `;
