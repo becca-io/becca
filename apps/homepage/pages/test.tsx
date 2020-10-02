@@ -1,4 +1,4 @@
-import { TextField } from '@becca/ui';
+import { TextArea, TextField } from '@becca/ui';
 import React, { useRef, useState } from 'react';
 
 export const Test = () => {
@@ -24,6 +24,8 @@ export const Test = () => {
       <TextField onChange={(e) => setValue(e.target.value)} value={value} />
       <h2>UnControlled TextField</h2>
       <TextField ref={inputRef} validationState="invalid" />
+      <h2>Text Area</h2>
+      <TextArea />
     </>
   );
 };
