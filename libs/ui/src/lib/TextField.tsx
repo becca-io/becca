@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { ThemeProps } from '../color';
+import { useBoolean } from '../hooks/useBoolean';
 
 export type ValidationState = 'valid' | 'invalid';
 
@@ -22,16 +23,16 @@ interface Props extends InputHTMLAttributes<HTMLInputElement>, Validation {
 
 const ControlledTextField = forwardRef(
   ({ type = 'text', label, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
-    const [isFocused, setIsFocused] = useState(false);
+    const [focus, setFocus, _, setBlur] = useBoolean(false);
 
     return (
       <Wrapper>
         <StyledInput
           {...rest}
           ref={ref}
-          isFocused={isFocused}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          isFocused={focus}
+          onFocus={setFocus}
+          onBlur={setBlur}
           required
         />
         <StatusBar />
@@ -96,7 +97,9 @@ const StatusBar = styled.span<ThemeProps & Props>`
   height: 3px;
 `;
 
-const StyledInput = styled.input<ThemeProps & Props & { isFocused: boolean }>`
+const StyledInput = styled.input<
+  ThemeProps & Validation & { isFocused: boolean }
+>`
   border-radius: 8px;
   border: 1px solid;
   padding: 10px 20px;
