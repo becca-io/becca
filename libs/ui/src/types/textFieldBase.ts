@@ -1,8 +1,8 @@
 import { InputHTMLAttributes, ReactNode } from 'react';
 import { Validation } from './shared';
 
-export interface InputBase
-  extends InputHTMLAttributes<HTMLInputElement>,
+export interface TextFieldBaseInterface
+  extends InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
     Validation {
   label?: ReactNode;
   type?: string;
