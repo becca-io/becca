@@ -1,17 +1,18 @@
 import styled from '@emotion/styled';
-import React, { forwardRef, Ref, RefObject, useState } from 'react';
+import React, { forwardRef, Ref, useState } from 'react';
 import { ThemeProps } from '..';
 import { useBoolean } from '../hooks/useBoolean';
 import { TextFieldBaseInterface } from '../types/textFieldBase';
 
 interface TextFieldBaseProps extends TextFieldBaseInterface {
   multiLine?: boolean;
+  ref?: Ref<HTMLInputElement | HTMLTextAreaElement>;
 }
 
 const ControlledTextFieldBase = forwardRef(
   (
-    { multiLine, ...rest }: Omit<TextFieldBaseProps, 'label'>,
-    ref: RefObject<HTMLInputElement | HTMLTextAreaElement>
+    { multiLine, label, ...rest }: TextFieldBaseProps,
+    ref: Ref<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const [focus, setFocus, _, setBlur] = useBoolean(false);
 
@@ -19,18 +20,18 @@ const ControlledTextFieldBase = forwardRef(
       <Wrapper>
         <StyledTextField
           {...rest}
-          ref={
-            multiLine
-              ? (ref as Ref<HTMLTextAreaElement>)
-              : (ref as Ref<HTMLInputElement>)
-          }
+          // FIXME: type issue
+          ref={ref}
           as={multiLine ? 'textarea' : 'input'}
           isFocused={focus}
+          rows={multiLine ? 1 : undefined}
           onFocus={setFocus}
           onBlur={setBlur}
           required
         />
+
         <StatusBar />
+        {label && <Label>{label}</Label>}
       </Wrapper>
     );
   }
@@ -98,11 +99,8 @@ const Label = styled.label<ThemeProps>`
 `;
 
 const StyledTextField = styled.input<
-  ThemeProps & {
-    ref: Ref<HTMLInputElement | HTMLTextAreaElement>;
-  } & TextFieldBaseInterface & { isFocused: boolean } & {
-      as?: React.ElementType;
-    }
+  ThemeProps &
+    Pick<TextFieldBaseProps, 'validationState'> & { isFocused: boolean }
 >`
   border-radius: 8px;
   border: 1px solid;
