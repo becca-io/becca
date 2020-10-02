@@ -1,122 +1,17 @@
-import styled from '@emotion/styled';
-import React, { forwardRef, Ref, useState } from 'react';
-import { ThemeProps } from '../color';
-import { useBoolean } from '../hooks/useBoolean';
-import { InputBase } from '../types/inputBase';
-import { Validation } from '../types/shared';
+import React, { forwardRef, Ref } from 'react';
+import { TextFieldBaseInterface } from '../types/textFieldBase';
+import { TextFieldBase } from './TextBase';
 
-type Props = InputBase;
-
-const ControlledTextField = forwardRef(
-  ({ type = 'text', label, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
-    const [focus, setFocus, _, setBlur] = useBoolean(false);
-
-    return (
-      <Wrapper>
-        <StyledInput
-          {...rest}
-          ref={ref}
-          isFocused={focus}
-          onFocus={setFocus}
-          onBlur={setBlur}
-          required
-        />
-        <StatusBar />
-        <Label>{label}</Label>
-      </Wrapper>
-    );
-  }
-);
-
-const UnControlledTextField = forwardRef(
-  (props: Props, ref: Ref<HTMLInputElement>) => {
-    const [value, setValue] = useState('');
-
-    return (
-      <ControlledTextField
-        {...props}
-        ref={ref}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    );
-  }
-);
+type Props = TextFieldBaseInterface;
 
 export const TextField = forwardRef(
-  ({ value, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
-    if (value == null) {
-      return <UnControlledTextField {...rest} ref={ref} />;
-    }
-    return <ControlledTextField {...rest} value={value} />;
+  (props: Props, ref: Ref<HTMLInputElement>) => {
+    // if (value == null) {
+    //   return <UnControlledTextField {...rest} ref={ref} />;
+    // }
+    // return <ControlledTextField {...rest} value={value} />;
+    return <TextFieldBase {...props} ref={ref} />;
   }
 );
-
-const Wrapper = styled.div`
-  position: relative;
-`;
-
-const Label = styled.label<ThemeProps>`
-  pointer-events: none;
-  font-size: 12px;
-  position: absolute;
-  left: 15px;
-  top: 14px;
-  color: ${({ theme }) => theme.colors.primary.gray6};
-  transition: 0.2s ease transform;
-`;
-
-const StatusBar = styled.span<ThemeProps & Props>`
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0.1s linear, opacity 0.1s linear;
-  position: absolute;
-  bottom: 0;
-  left: 2px;
-  background-color: ${({ theme }) => {
-    return theme.colors.primary.violet7;
-  }};
-  display: inline-block;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  width: calc(100% - 4px);
-  height: 3px;
-`;
-
-const StyledInput = styled.input<
-  ThemeProps & Validation & { isFocused: boolean }
->`
-  border-radius: 8px;
-  border: 1px solid;
-  padding: 10px 20px;
-  box-sizing: border-box;
-  width: 100%;
-  border-color: ${({ theme }) => theme.colors.primary.gray2};
-
-  & + span {
-    visibility: visible;
-    opacity: 1;
-    transition: visibility 0s linear, opacity 0.1s linear;
-    background-color: ${({ theme, validationState, isFocused }) => {
-      if (validationState === 'invalid') {
-        return theme.colors.primary.red3;
-      }
-      if (validationState === 'valid') {
-        return theme.colors.primary.green3;
-      }
-      if (!isFocused) {
-        return 'transparent';
-      }
-      if (validationState === undefined) {
-        return theme.colors.primary.violet3;
-      }
-    }};
-  }
-
-  &:focus ~ label,
-  &:valid ~ label {
-    transform: translate3D(0, -35px, 0);
-  }
-`;
 
 export default TextField;
