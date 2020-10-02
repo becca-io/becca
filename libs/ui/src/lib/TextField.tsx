@@ -1,25 +1,11 @@
 import styled from '@emotion/styled';
-import React, {
-  forwardRef,
-  InputHTMLAttributes,
-  ReactNode,
-  Ref,
-  useState,
-} from 'react';
+import React, { forwardRef, Ref, useState } from 'react';
 import { ThemeProps } from '../color';
 import { useBoolean } from '../hooks/useBoolean';
+import { InputBase } from '../types/inputBase';
+import { Validation } from '../types/shared';
 
-export type ValidationState = 'valid' | 'invalid';
-
-export interface Validation {
-  validationState?: ValidationState;
-  isRequired?: boolean;
-}
-
-interface Props extends InputHTMLAttributes<HTMLInputElement>, Validation {
-  label?: ReactNode;
-  type?: string;
-}
+type Props = InputBase;
 
 const ControlledTextField = forwardRef(
   ({ type = 'text', label, ...rest }: Props, ref: Ref<HTMLInputElement>) => {
